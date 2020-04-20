@@ -1,0 +1,3 @@
+[submodule "Db"]
+	path = CliMed.Api/Db
+	url = https://github.com/dmodena/climed-db.git
