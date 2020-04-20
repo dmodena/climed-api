@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CliMed.Api.Data;
+using CliMed.Api.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -28,6 +29,9 @@ namespace CliMed.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<DataContext>(opt => opt.UseMySql(Configuration["DEFAULT_DB_CONNECTION_STRING"]));
+
+            services.AddScoped<IRoleService, RoleService>();
+
             services.AddControllers();
             services.AddHealthChecks();
         }
