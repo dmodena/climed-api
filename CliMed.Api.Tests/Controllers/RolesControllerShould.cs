@@ -1,11 +1,7 @@
 ﻿using CliMed.Api.Controllers;
-using CliMed.Api.Models;
 using CliMed.Api.Services;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using Xunit;
 
 namespace CliMed.Api.Tests.Controllers

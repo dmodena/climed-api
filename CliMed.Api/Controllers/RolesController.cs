@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using CliMed.Api.Services;
-using Microsoft.AspNetCore.Http;
+﻿using CliMed.Api.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CliMed.Api.Controllers
