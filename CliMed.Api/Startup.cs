@@ -26,6 +26,9 @@ namespace CliMed.Api
             services.AddScoped<IRoleService, RoleService>();
 
             services.AddControllers();
+
+            services.AddApiVersioning();
+
             services.AddHealthChecks();
         }
 
