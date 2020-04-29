@@ -35,7 +35,7 @@ namespace CliMed.Api
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "CliMed API", Version = "v1" });
             });
 
-            services.AddHealthChecks();
+            services.AddHealthChecks().AddMySql(Configuration["DEFAULT_DB_CONNECTION_STRING"]);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
