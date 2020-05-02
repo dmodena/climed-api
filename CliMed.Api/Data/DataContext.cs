@@ -9,5 +9,6 @@ namespace CliMed.Api.Data
         public DataContext(DbContextOptions<DataContext> options) : base(options) { }
 
         public DbSet<Role> Roles { get; set; }
+        public DbSet<User> Users { get; set; }
     }
 }
