@@ -14,7 +14,7 @@ namespace CliMed.Api.Tests.Controllers
             var rolesServiceMock = new Mock<IRoleService>();
             var sut = new RolesController();
 
-            var result = sut.GetRoles(rolesServiceMock.Object);
+            var result = sut.Get(rolesServiceMock.Object);
 
             Assert.IsType<OkObjectResult>(result);
         }

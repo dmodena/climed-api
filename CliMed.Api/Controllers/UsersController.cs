@@ -28,7 +28,7 @@ namespace CliMed.Api.Controllers
         [HttpGet]
         [Route("{id}")]
         [ProducesResponseType(typeof(User), StatusCodes.Status200OK)]
-        public ActionResult<User> GetById(long id)
+        public ActionResult<User> GetById([FromRoute] long id)
         {
             return Ok(_userService.GetById(id));
         }
@@ -42,13 +42,9 @@ namespace CliMed.Api.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(user);
 
-            if (!_userService.IsEmailUnique(user))
-                return BadRequest($"The email {user.Email} already exists.");
-
             _userService.Add(user);
 
             return CreatedAtAction(nameof(GetById), new { version = "1.0", id = user.Id }, user);
-
         }
     }
 }

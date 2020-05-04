@@ -36,16 +36,5 @@ namespace CliMed.Api.Services
             _context.SaveChanges();
             return user;
         }
-
-        public bool IsEmailUnique(User user)
-        {
-            var dbUser = GetByEmail(user.Email);
-
-            if (dbUser == null) return true;
-
-            if (user.Id.HasValue && user.Id == dbUser.Id) return true;
-
-            return false;
-        }
     }
 }

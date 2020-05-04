@@ -10,11 +10,18 @@ namespace CliMed.Api.Controllers
     [ApiController]
     public class RolesController : ControllerBase
     {
+        private readonly IRoleService _roleService;
+
+        public RolesController([FromServices] IRoleService roleService)
+        {
+            _roleService = roleService;
+        }
+
         [HttpGet]
         [ProducesResponseType(typeof(IList<Role>), 200)]
-        public IActionResult GetRoles([FromServices] IRoleService roleService)
+        public IActionResult Get()
         {
-            return Ok(roleService.GetAllItems());
+            return Ok(_roleService.GetAllItems());
         }
     }
 }

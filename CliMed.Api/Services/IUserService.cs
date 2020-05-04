@@ -9,6 +9,5 @@ namespace CliMed.Api.Services
         User GetById(long id);
         User GetByEmail(string email);
         User Add(User user);
-        bool IsEmailUnique(User user);
     }
 }

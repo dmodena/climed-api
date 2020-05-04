@@ -39,13 +39,12 @@ namespace CliMed.Api.Tests.Controllers
         [Fact]
         public void AddUserShouldReturn400BadRequestForNonUniqueEmail()
         {
-            userServiceMock.Setup(u => u.IsEmailUnique(It.IsAny<User>())).Returns(false);
-
             var user = new User
             {
                 Email = "a@a.com",
                 Password = "a"
             };
+            sut.ModelState.AddModelError("Email", "The email already exists.");
 
             var result = sut.Create(user);
 
@@ -55,8 +54,6 @@ namespace CliMed.Api.Tests.Controllers
         [Fact]
         public void CreateShouldReturn201Created()
         {
-            userServiceMock.Setup(u => u.IsEmailUnique(It.IsAny<User>())).Returns(true);
-
             var user = new User
             {
                 Email = "a@a.com",
