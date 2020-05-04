@@ -25,6 +25,7 @@ namespace CliMed.Api
             services.AddDbContext<DataContext>(opt => opt.UseMySql(Configuration["DEFAULT_DB_CONNECTION_STRING"]));
 
             services.AddScoped<IRoleService, RoleService>();
+            services.AddScoped<IUserService, UserService>();
 
             services.AddControllers();
 
