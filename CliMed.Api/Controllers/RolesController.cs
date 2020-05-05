@@ -1,5 +1,6 @@
 ﻿using CliMed.Api.Models;
 using CliMed.Api.Services;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 
@@ -18,8 +19,8 @@ namespace CliMed.Api.Controllers
         }
 
         [HttpGet]
-        [ProducesResponseType(typeof(IList<Role>), 200)]
-        public IActionResult Get()
+        [ProducesResponseType(typeof(IList<Role>), StatusCodes.Status200OK)]
+        public ActionResult<IList<Role>> Get()
         {
             return Ok(_roleService.GetAllItems());
         }
