@@ -1,6 +1,7 @@
 ﻿using CliMed.Api.Controllers;
 using CliMed.Api.Models;
 using CliMed.Api.Services;
+using CliMed.Api.Tests.Builders;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Xunit;
@@ -39,11 +40,7 @@ namespace CliMed.Api.Tests.Controllers
         [Fact]
         public void AddUserShouldReturn400BadRequestForNonUniqueEmail()
         {
-            var user = new User
-            {
-                Email = "a@a.com",
-                Password = "a"
-            };
+            var user = UserBuilder.Simple().Build();
             sut.ModelState.AddModelError("Email", "The email already exists.");
 
             var result = sut.Create(user);
@@ -54,11 +51,7 @@ namespace CliMed.Api.Tests.Controllers
         [Fact]
         public void CreateShouldReturn201Created()
         {
-            var user = new User
-            {
-                Email = "a@a.com",
-                Password = "a"
-            };
+            var user = UserBuilder.Simple().Build();
 
             var result = sut.Create(user);
 
