@@ -22,7 +22,7 @@ namespace CliMed.Api.Tests.Controllers
         }
 
         [Fact]
-        public void GetShouldReturn200OK()
+        public void Get_ShouldReturn200OK()
         {
             var result = sut.Get();
 
@@ -30,7 +30,7 @@ namespace CliMed.Api.Tests.Controllers
         }
 
         [Fact]
-        public void GetShouldReturnRoleList()
+        public void Get_ShouldReturnRoleList()
         {
             var result = sut.Get().Result as OkObjectResult;
 

@@ -25,7 +25,7 @@ namespace CliMed.Api.Tests.Controllers
         }
 
         [Fact]
-        public void GetShouldReturn200OK()
+        public void Get_ShouldReturn200OK()
         {
             var result = sut.Get();
 
@@ -33,7 +33,7 @@ namespace CliMed.Api.Tests.Controllers
         }
 
         [Fact]
-        public void GetShouldReturnUserList()
+        public void Get_ShouldReturnUserList()
         {
             var result = sut.Get().Result as OkObjectResult;
 
@@ -41,7 +41,7 @@ namespace CliMed.Api.Tests.Controllers
         }
 
         [Fact]
-        public void GetByIdShouldReturn200OK()
+        public void GetById_ShouldReturn200OK()
         {
             var result = sut.GetById(1);
 
@@ -49,7 +49,7 @@ namespace CliMed.Api.Tests.Controllers
         }
 
         [Fact]
-        public void GetByIdShouldReturnUser()
+        public void GetById_ShouldReturnUser()
         {
             var result = sut.GetById(1).Result as OkObjectResult;
 
@@ -57,7 +57,7 @@ namespace CliMed.Api.Tests.Controllers
         }
 
         [Fact]
-        public void AddUserShouldReturn400BadRequestForNonUniqueEmail()
+        public void Create_ShouldReturn400BadRequestForNonUniqueEmail()
         {
             var user = UserBuilder.Simple().Build();
             sut.ModelState.AddModelError("Email", "The email already exists.");
@@ -68,7 +68,7 @@ namespace CliMed.Api.Tests.Controllers
         }
 
         [Fact]
-        public void CreateShouldReturn201Created()
+        public void Create_ShouldReturn201Created()
         {
             var user = UserBuilder.Simple().Build();
 
@@ -78,7 +78,7 @@ namespace CliMed.Api.Tests.Controllers
         }
 
         [Fact]
-        public void CreateShouldReturnUser()
+        public void Create_ShouldReturnUser()
         {
             var user = UserBuilder.Simple().Build();
 
