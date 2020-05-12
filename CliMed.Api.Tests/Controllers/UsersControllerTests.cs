@@ -4,6 +4,7 @@ using CliMed.Api.Services;
 using CliMed.Api.Tests.Builders;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
+using System.Collections.Generic;
 using Xunit;
 
 namespace CliMed.Api.Tests.Controllers
@@ -16,6 +17,10 @@ namespace CliMed.Api.Tests.Controllers
         public UsersControllerTests()
         {
             userServiceMock = new Mock<IUserService>();
+            userServiceMock.Setup(m => m.GetAllItems()).Returns(new List<User>());
+            userServiceMock.Setup(m => m.GetById(It.IsAny<long>())).Returns(new User());
+            userServiceMock.Setup(m => m.Create(It.IsAny<User>())).Returns(new User());
+
             sut = new UsersController(userServiceMock.Object);
         }
 
@@ -28,13 +33,27 @@ namespace CliMed.Api.Tests.Controllers
         }
 
         [Fact]
+        public void GetShouldReturnUserList()
+        {
+            var result = sut.Get().Result as OkObjectResult;
+
+            Assert.IsAssignableFrom<IList<User>>(result.Value);
+        }
+
+        [Fact]
         public void GetByIdShouldReturn200OK()
         {
-            userServiceMock.Setup(u => u.GetById(It.IsAny<long>())).Returns(new User());
-
             var result = sut.GetById(1);
 
             Assert.IsType<OkObjectResult>(result.Result);
+        }
+
+        [Fact]
+        public void GetByIdShouldReturnUser()
+        {
+            var result = sut.GetById(1).Result as OkObjectResult;
+
+            Assert.IsType<User>(result.Value);
         }
 
         [Fact]
@@ -56,6 +75,16 @@ namespace CliMed.Api.Tests.Controllers
             var result = sut.Create(user);
 
             Assert.IsType<CreatedAtActionResult>(result.Result);
+        }
+
+        [Fact]
+        public void CreateShouldReturnUser()
+        {
+            var user = UserBuilder.Simple().Build();
+
+            var result = sut.Create(user).Result as CreatedAtActionResult;
+
+            Assert.IsType<User>(result.Value);
         }
     }
 }
