@@ -1,40 +1,37 @@
-﻿using CliMed.Api.Data;
-using CliMed.Api.Models;
+﻿using CliMed.Api.Models;
+using CliMed.Api.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace CliMed.Api.Services
 {
     public class UserService : IUserService
     {
-        private readonly DataContext _context;
+        private readonly IUserRepository _repository;
 
-        public UserService([FromServices] DataContext context)
+        public UserService([FromServices] IUserRepository repository)
         {
-            _context = context;
+            _repository = repository;
         }
 
         public IList<User> GetAllItems()
         {
-            return _context.Users.ToList();
+            return _repository.GetAllItems();
         }
 
         public User GetById(long id)
         {
-            return _context.Users.FirstOrDefault(u => u.Id.Value == id);
+            return _repository.GetById(id);
         }
 
         public User GetByEmail(string email)
         {
-            return _context.Users.FirstOrDefault(u => u.Email == email);
+            return _repository.GetByEmail(email);
         }
 
-        public User Add(User user)
+        public User Create(User user)
         {
-            _context.Add(user);
-            _context.SaveChanges();
-            return user;
+            return _repository.Create(user);
         }
     }
 }

@@ -42,7 +42,7 @@ namespace CliMed.Api.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(user);
 
-            _userService.Add(user);
+            _userService.Create(user);
 
             return CreatedAtAction(nameof(GetById), new { version = "1.0", id = user.Id }, user);
         }

@@ -8,6 +8,6 @@ namespace CliMed.Api.Services
         IList<User> GetAllItems();
         User GetById(long id);
         User GetByEmail(string email);
-        User Add(User user);
+        User Create(User user);
     }
 }

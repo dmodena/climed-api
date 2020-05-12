@@ -1,4 +1,5 @@
 using CliMed.Api.Data;
+using CliMed.Api.Repositories;
 using CliMed.Api.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -23,6 +24,8 @@ namespace CliMed.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<DataContext>(opt => opt.UseMySql(Configuration["DEFAULT_DB_CONNECTION_STRING"]));
+
+            services.AddScoped<IUserRepository, UserRepository>();
 
             services.AddScoped<IRoleService, RoleService>();
             services.AddScoped<IUserService, UserService>();
