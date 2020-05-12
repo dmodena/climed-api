@@ -1,21 +1,20 @@
-﻿using CliMed.Api.Data;
-using CliMed.Api.Models;
+﻿using CliMed.Api.Models;
+using CliMed.Api.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace CliMed.Api.Services
 {
     public class RoleService : IRoleService
     {
-        private readonly DataContext _context;
-        public RoleService([FromServices] DataContext context)
+        private readonly IRoleRepository _repository;
+        public RoleService([FromServices] IRoleRepository repository)
         {
-            _context = context;
+            _repository = repository;
         }
         public IList<Role> GetAllItems()
         {
-            return _context.Roles.ToList();
+            return _repository.GetlAllItems();
         }
     }
 }
