@@ -1,3 +1,4 @@
+using AutoMapper;
 using CliMed.Api.Data;
 using CliMed.Api.Repositories;
 using CliMed.Api.Services;
@@ -30,6 +31,8 @@ namespace CliMed.Api
 
             services.AddScoped<IRoleService, RoleService>();
             services.AddScoped<IUserService, UserService>();
+
+            services.AddAutoMapper(typeof(Startup));
 
             services.AddControllers();
 

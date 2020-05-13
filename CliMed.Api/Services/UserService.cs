@@ -1,4 +1,6 @@
-﻿using CliMed.Api.Models;
+﻿using AutoMapper;
+using CliMed.Api.Dto;
+using CliMed.Api.Models;
 using CliMed.Api.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
@@ -8,30 +10,36 @@ namespace CliMed.Api.Services
     public class UserService : IUserService
     {
         private readonly IUserRepository _repository;
+        private readonly IMapper _mapper;
 
-        public UserService([FromServices] IUserRepository repository)
+        public UserService([FromServices] IUserRepository repository, [FromServices] IMapper mapper)
         {
             _repository = repository;
+            _mapper = mapper;
         }
 
-        public IList<User> GetAllItems()
+        public IList<UserDto> GetAllItems()
         {
-            return _repository.GetAllItems();
+            var userList = _repository.GetAllItems();
+            return _mapper.Map<IList<UserDto>>(userList);
         }
 
-        public User GetById(long id)
+        public UserDto GetById(long id)
         {
-            return _repository.GetById(id);
+            var user = _repository.GetById(id);
+            return _mapper.Map<UserDto>(user);
         }
 
-        public User GetByEmail(string email)
+        public UserDto GetByEmail(string email)
         {
-            return _repository.GetByEmail(email);
+            var user = _repository.GetByEmail(email);
+            return _mapper.Map<UserDto>(user);
         }
 
-        public User Create(User user)
+        public UserDto Create(User user)
         {
-            return _repository.Create(user);
+            var userDb = _repository.Create(user);
+            return _mapper.Map<UserDto>(userDb);
         }
     }
 }

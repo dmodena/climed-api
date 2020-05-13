@@ -1,13 +1,14 @@
-﻿using CliMed.Api.Models;
+﻿using CliMed.Api.Dto;
+using CliMed.Api.Models;
 using System.Collections.Generic;
 
 namespace CliMed.Api.Services
 {
     public interface IUserService
     {
-        IList<User> GetAllItems();
-        User GetById(long id);
-        User GetByEmail(string email);
-        User Create(User user);
+        IList<UserDto> GetAllItems();
+        UserDto GetById(long id);
+        UserDto GetByEmail(string email);
+        UserDto Create(User user);
     }
 }

@@ -1,5 +1,5 @@
 ﻿using CliMed.Api.Controllers;
-using CliMed.Api.Models;
+using CliMed.Api.Dto;
 using CliMed.Api.Services;
 using CliMed.Api.Tests.Builders;
 using Microsoft.AspNetCore.Mvc;
@@ -17,9 +17,9 @@ namespace CliMed.Api.Tests.Controllers
         public UsersControllerTests()
         {
             userServiceMock = new Mock<IUserService>();
-            userServiceMock.Setup(m => m.GetAllItems()).Returns(new List<User>());
-            userServiceMock.Setup(m => m.GetById(It.IsAny<long>())).Returns(new User());
-            userServiceMock.Setup(m => m.Create(It.IsAny<User>())).Returns(new User());
+            userServiceMock.Setup(m => m.GetAllItems()).Returns(new List<UserDto>());
+            userServiceMock.Setup(m => m.GetById(It.IsAny<long>())).Returns(new UserDto());
+            userServiceMock.Setup(m => m.Create(It.IsAny<Models.User>())).Returns(new UserDto());
 
             sut = new UsersController(userServiceMock.Object);
         }
@@ -33,11 +33,11 @@ namespace CliMed.Api.Tests.Controllers
         }
 
         [Fact]
-        public void Get_ShouldReturnUserList()
+        public void Get_ShouldReturnUserDtoList()
         {
             var result = sut.Get().Result as OkObjectResult;
 
-            Assert.IsAssignableFrom<IList<User>>(result.Value);
+            Assert.IsAssignableFrom<IList<UserDto>>(result.Value);
         }
 
         [Fact]
@@ -49,11 +49,11 @@ namespace CliMed.Api.Tests.Controllers
         }
 
         [Fact]
-        public void GetById_ShouldReturnUser()
+        public void GetById_ShouldReturnUserDto()
         {
             var result = sut.GetById(1).Result as OkObjectResult;
 
-            Assert.IsType<User>(result.Value);
+            Assert.IsType<UserDto>(result.Value);
         }
 
         [Fact]
@@ -78,13 +78,13 @@ namespace CliMed.Api.Tests.Controllers
         }
 
         [Fact]
-        public void Create_ShouldReturnUser()
+        public void Create_ShouldReturnUserDto()
         {
             var user = UserBuilder.Simple().Build();
 
             var result = sut.Create(user).Result as CreatedAtActionResult;
 
-            Assert.IsType<User>(result.Value);
+            Assert.IsType<UserDto>(result.Value);
         }
     }
 }

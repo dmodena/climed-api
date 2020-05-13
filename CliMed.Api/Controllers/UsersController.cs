@@ -1,4 +1,5 @@
-﻿using CliMed.Api.Models;
+﻿using CliMed.Api.Dto;
+using CliMed.Api.Models;
 using CliMed.Api.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -19,32 +20,32 @@ namespace CliMed.Api.Controllers
         }
 
         [HttpGet]
-        [ProducesResponseType(typeof(IList<User>), StatusCodes.Status200OK)]
-        public ActionResult<IList<User>> Get()
+        [ProducesResponseType(typeof(IList<UserDto>), StatusCodes.Status200OK)]
+        public ActionResult<IList<UserDto>> Get()
         {
             return Ok(_userService.GetAllItems());
         }
 
         [HttpGet]
         [Route("{id}")]
-        [ProducesResponseType(typeof(User), StatusCodes.Status200OK)]
-        public ActionResult<User> GetById([FromRoute] long id)
+        [ProducesResponseType(typeof(UserDto), StatusCodes.Status200OK)]
+        public ActionResult<UserDto> GetById([FromRoute] long id)
         {
             return Ok(_userService.GetById(id));
         }
 
 
         [HttpPost]
-        [ProducesResponseType(typeof(User), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(UserDto), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public ActionResult<User> Create([FromBody] User user)
+        public ActionResult<UserDto> Create([FromBody] User user)
         {
             if (!ModelState.IsValid)
                 return BadRequest(user);
 
-            _userService.Create(user);
+            var userDto = _userService.Create(user);
 
-            return CreatedAtAction(nameof(GetById), new { version = "1.0", id = user.Id }, user);
+            return CreatedAtAction(nameof(GetById), new { version = "1.0", id = userDto.Id }, userDto);
         }
     }
 }
