@@ -40,8 +40,8 @@ namespace CliMed.Api.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public ActionResult<UserDto> Create([FromBody] User user)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(user);
+            if (_userService.GetByEmail(user.Email) != null)
+                return BadRequest($"The email {user.Email} already exists.");
 
             var userDto = _userService.Create(user);
 

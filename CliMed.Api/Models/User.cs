@@ -1,5 +1,4 @@
-﻿using CliMed.Api.Models.CustomValidation;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CliMed.Api.Models
@@ -15,7 +14,6 @@ namespace CliMed.Api.Models
         public string Username { get; set; }
 
         [Required]
-        [UniqueEmail]
         [Column("email")]
         public string Email { get; set; }
 

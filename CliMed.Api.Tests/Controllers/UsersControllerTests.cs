@@ -60,7 +60,8 @@ namespace CliMed.Api.Tests.Controllers
         public void Create_ShouldReturn400BadRequestForNonUniqueEmail()
         {
             var user = UserBuilder.Simple().Build();
-            sut.ModelState.AddModelError("Email", "The email already exists.");
+            userServiceMock.Setup(m => m.GetByEmail(user.Email))
+                .Returns(new UserDto { Email = user.Email });
 
             var result = sut.Create(user);
 
