@@ -1,14 +1,18 @@
 using AutoMapper;
+using CliMed.Api.Auth;
 using CliMed.Api.Data;
 using CliMed.Api.Repositories;
 using CliMed.Api.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System.Text;
 
 namespace CliMed.Api
 {
@@ -32,9 +36,13 @@ namespace CliMed.Api
             services.AddScoped<IRoleService, RoleService>();
             services.AddScoped<IUserService, UserService>();
 
+            services.AddScoped<ITokens, Tokens>();
+
             services.AddAutoMapper(typeof(Startup));
 
             services.AddControllers();
+
+            AddAuthentication(services);
 
             services.AddApiVersioning();
 
@@ -65,6 +73,8 @@ namespace CliMed.Api
 
             app.UseRouting();
 
+            app.UseAuthentication();
+
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
@@ -72,6 +82,30 @@ namespace CliMed.Api
                 endpoints.MapControllers();
                 endpoints.MapHealthChecks("/health");
             });
+        }
+
+        private void AddAuthentication(IServiceCollection services)
+        {
+            services
+                .AddAuthentication(s =>
+                {
+                    s.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                    s.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                })
+                .AddJwtBearer(s =>
+                {
+                    s.RequireHttpsMetadata = false;
+                    s.SaveToken = true;
+                    s.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = new SymmetricSecurityKey(
+                            Encoding.ASCII.GetBytes(Configuration["API_AUTH_KEY"])
+                            ),
+                        ValidateIssuer = false,
+                        ValidateAudience = false
+                    };
+                });
         }
     }
 }
