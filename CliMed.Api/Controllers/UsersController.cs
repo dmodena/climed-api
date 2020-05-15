@@ -1,6 +1,7 @@
 ﻿using CliMed.Api.Dto;
 using CliMed.Api.Models;
 using CliMed.Api.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
@@ -20,6 +21,7 @@ namespace CliMed.Api.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         [ProducesResponseType(typeof(IList<UserDto>), StatusCodes.Status200OK)]
         public ActionResult<IList<UserDto>> Get()
         {
@@ -27,6 +29,7 @@ namespace CliMed.Api.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         [Route("{id}")]
         [ProducesResponseType(typeof(UserDto), StatusCodes.Status200OK)]
         public ActionResult<UserDto> GetById([FromRoute] long id)
@@ -36,6 +39,7 @@ namespace CliMed.Api.Controllers
 
 
         [HttpPost]
+        [Authorize(Roles = "admin")]
         [ProducesResponseType(typeof(UserDto), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public ActionResult<UserDto> Create([FromBody] User user)

@@ -2,9 +2,13 @@
 using CliMed.Api.Dto;
 using CliMed.Api.Services;
 using CliMed.Api.Tests.Builders;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using Xunit;
 
 namespace CliMed.Api.Tests.Controllers
@@ -25,6 +29,18 @@ namespace CliMed.Api.Tests.Controllers
         }
 
         [Fact]
+        public void Get_ShouldHaveAuthorizeAttribute()
+        {
+            MethodInfo sutMethod = sut.GetType().GetMethod("Get");
+            Attribute[] attributes = Attribute.GetCustomAttributes(sutMethod);
+
+            var authorizationAttribute = attributes.FirstOrDefault(a => a is AuthorizeAttribute) as AuthorizeAttribute;
+
+            Assert.NotNull(authorizationAttribute);
+            Assert.Null(authorizationAttribute.Roles);
+        }
+
+        [Fact]
         public void Get_ShouldReturn200OK()
         {
             var result = sut.Get();
@@ -41,6 +57,18 @@ namespace CliMed.Api.Tests.Controllers
         }
 
         [Fact]
+        public void GetById_ShouldHaveAuthorizeAttribute()
+        {
+            MethodInfo sutMethod = sut.GetType().GetMethod("GetById");
+            Attribute[] attributes = Attribute.GetCustomAttributes(sutMethod);
+
+            var authorizationAttribute = attributes.FirstOrDefault(a => a is AuthorizeAttribute) as AuthorizeAttribute;
+
+            Assert.NotNull(authorizationAttribute);
+            Assert.Null(authorizationAttribute.Roles);
+        }
+
+        [Fact]
         public void GetById_ShouldReturn200OK()
         {
             var result = sut.GetById(1);
@@ -54,6 +82,29 @@ namespace CliMed.Api.Tests.Controllers
             var result = sut.GetById(1).Result as OkObjectResult;
 
             Assert.IsType<UserDto>(result.Value);
+        }
+
+        [Fact]
+        public void Create_ShouldHaveAuthorizeAttribute()
+        {
+            MethodInfo sutMethod = sut.GetType().GetMethod("Create");
+            Attribute[] attributes = Attribute.GetCustomAttributes(sutMethod);
+
+            var authorizationAttribute = attributes.FirstOrDefault(a => a is AuthorizeAttribute) as AuthorizeAttribute;
+
+            Assert.NotNull(authorizationAttribute);
+        }
+
+        [Fact]
+        public void Create_ShouldAuthorizeAdmin()
+        {
+            MethodInfo sutMethod = sut.GetType().GetMethod("Create");
+            Attribute[] attributes = Attribute.GetCustomAttributes(sutMethod);
+
+            var authorizationAttribute = attributes.FirstOrDefault(a => a is AuthorizeAttribute) as AuthorizeAttribute;
+
+            Assert.NotNull(authorizationAttribute);
+            Assert.Contains("admin", authorizationAttribute.Roles);
         }
 
         [Fact]

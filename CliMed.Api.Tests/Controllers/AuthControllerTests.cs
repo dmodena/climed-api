@@ -3,8 +3,12 @@ using CliMed.Api.Dto;
 using CliMed.Api.Models;
 using CliMed.Api.Services;
 using CliMed.Api.Tests.Builders;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
+using System;
+using System.Linq;
+using System.Reflection;
 using Xunit;
 
 namespace CliMed.Api.Tests.Controllers
@@ -20,6 +24,17 @@ namespace CliMed.Api.Tests.Controllers
             authServiceMock.Setup(m => m.Login(It.IsAny<User>())).Returns(new UserTokenDto());
 
             sut = new AuthController(authServiceMock.Object);
+        }
+
+        [Fact]
+        public void Login_ShouldHaveAllowAnonymousAttribute()
+        {
+            MethodInfo sutMethod = sut.GetType().GetMethod("Login");
+            Attribute[] attributes = Attribute.GetCustomAttributes(sutMethod);
+
+            var allowAnonymousAttribute = attributes.FirstOrDefault(a => a is AllowAnonymousAttribute) as AllowAnonymousAttribute;
+
+            Assert.NotNull(allowAnonymousAttribute);
         }
 
         [Fact]
