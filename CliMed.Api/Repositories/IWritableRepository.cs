@@ -4,6 +4,5 @@
     {
         T Create(T item);
         T Update(T item);
-        void Delete(T item);
     }
 }
