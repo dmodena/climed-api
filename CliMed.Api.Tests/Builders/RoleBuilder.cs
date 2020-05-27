@@ -24,7 +24,13 @@ namespace CliMed.Api.Tests.Builders
 
         public static RoleBuilder Typical()
         {
-            return Simple();
+            return Simple()
+                .WithId(1);
+        }
+
+        public static RoleBuilder Admin()
+        {
+            return Typical();
         }
 
         public RoleBuilder WithId(long id)

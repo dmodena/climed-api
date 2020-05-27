@@ -4,6 +4,7 @@ using CliMed.Api.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace CliMed.Api.Controllers
 {
@@ -13,10 +14,12 @@ namespace CliMed.Api.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IAuthService _authService;
+        private readonly IUserService _userService;
 
-        public AuthController([FromServices] IAuthService authService)
+        public AuthController([FromServices] IAuthService authService, [FromServices] IUserService userService)
         {
             _authService = authService;
+            _userService = userService;
         }
 
         [HttpPost]
@@ -32,6 +35,22 @@ namespace CliMed.Api.Controllers
                 return Unauthorized("Invalid user or password.");
 
             return Ok(userTokenDto);
+        }
+
+        [HttpPost]
+        [Authorize]
+        [Route("resetpassword")]
+        [ProducesResponseType(typeof(UserDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        public ActionResult<UserDto> ResetPassword([FromBody] User user)
+        {
+            if (User.FindFirst(ClaimTypes.Email).Value == user.Email || User.IsInRole("admin"))
+            {
+                var userDto = _userService.UpdatePassword(user);
+                return Ok(userDto);
+            }
+
+            return Forbid();
         }
     }
 }
