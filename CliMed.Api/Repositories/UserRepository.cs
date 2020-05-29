@@ -20,7 +20,7 @@ namespace CliMed.Api.Repositories
         {
             _context.Add(user);
             _context.SaveChanges();
-            return GetById(user.Id.Value);
+            return user;
         }
 
         public IList<User> GetAllItems()
@@ -36,6 +36,17 @@ namespace CliMed.Api.Repositories
         public User GetById(long id)
         {
             return _context.Users.Include(u => u.Role).FirstOrDefault(u => u.Id.Value == id);
+        }
+
+        public User Update(User item)
+        {
+            var userDb = _context.Users.SingleOrDefault(u => u.Id == item.Id);
+            if (userDb == null)
+                return null;
+
+            _context.Entry(userDb).CurrentValues.SetValues(item);
+            _context.SaveChanges();
+            return userDb;
         }
     }
 }

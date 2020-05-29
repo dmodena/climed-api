@@ -38,5 +38,18 @@ namespace CliMed.Api.Tests.Repositories
             Assert.True(usersWithRoles.Count > 0);
         }
 
+        [Fact]
+        public void Update_ShouldUpdateUser()
+        {
+            var user = sut.GetById(1);
+            var updatedPassword = "updatedPassword";
+
+            user.Password = updatedPassword;
+
+            var result = sut.Update(user);
+
+            Assert.IsType<User>(result);
+            Assert.Equal(updatedPassword, result.Password);
+        }
     }
 }
