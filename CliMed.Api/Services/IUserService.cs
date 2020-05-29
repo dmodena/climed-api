@@ -10,5 +10,6 @@ namespace CliMed.Api.Services
         UserDto GetById(long id);
         UserDto GetByEmail(string email);
         UserDto Create(User user);
+        UserDto UpdatePassword(User user);
     }
 }

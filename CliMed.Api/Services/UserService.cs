@@ -41,5 +41,13 @@ namespace CliMed.Api.Services
             var userDb = _repository.Create(user);
             return _mapper.Map<UserDto>(userDb);
         }
+
+        public UserDto UpdatePassword(User user)
+        {
+            var userDb = _repository.GetByEmail(user.Email);
+            userDb.Password = user.Password;
+            _repository.Update(userDb);
+            return _mapper.Map<UserDto>(userDb);
+        }
     }
 }

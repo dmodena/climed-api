@@ -64,5 +64,16 @@ namespace CliMed.Api.Tests.Services
 
             Assert.IsType<UserDto>(result);
         }
+
+        [Fact]
+        public void UpdatePassword_ShouldReturnUserDto()
+        {
+            var user = UserBuilder.Simple().Build();
+            user.Password = "newPassword";
+
+            var result = sut.UpdatePassword(user);
+
+            Assert.IsType<UserDto>(result);
+        }
     }
 }
