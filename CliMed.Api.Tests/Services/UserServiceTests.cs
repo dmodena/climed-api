@@ -4,6 +4,7 @@ using CliMed.Api.Models;
 using CliMed.Api.Repositories;
 using CliMed.Api.Services;
 using CliMed.Api.Tests.Builders;
+using CliMed.Api.Utils;
 using Moq;
 using System.Collections.Generic;
 using Xunit;
@@ -14,6 +15,7 @@ namespace CliMed.Api.Tests.Services
     {
         private Mock<IUserRepository> userRepositoryMock;
         private Mock<IMapper> mapperMock;
+        private Mock<ICrypto> cryptoMock;
         private UserService sut;
 
         public UserServiceTests()
@@ -28,7 +30,9 @@ namespace CliMed.Api.Tests.Services
             mapperMock.Setup(m => m.Map<UserDto>(It.IsAny<User>())).Returns(new UserDto());
             mapperMock.Setup(m => m.Map<IList<UserDto>>(It.IsAny<IList<User>>())).Returns(new List<UserDto>());
 
-            sut = new UserService(userRepositoryMock.Object, mapperMock.Object);
+            cryptoMock = new Mock<ICrypto>();
+
+            sut = new UserService(userRepositoryMock.Object, mapperMock.Object, cryptoMock.Object);
         }
 
         [Fact]
@@ -66,6 +70,16 @@ namespace CliMed.Api.Tests.Services
         }
 
         [Fact]
+        public void Create_ShouldSaveHashedPassword()
+        {
+            var user = UserBuilder.Simple().Build();
+
+            var result = sut.Create(user);
+
+            cryptoMock.Verify(x => x.HashPassword(It.IsAny<string>()), Times.Once);
+        }
+
+        [Fact]
         public void UpdatePassword_ShouldReturnUserDto()
         {
             var user = UserBuilder.Simple().Build();
@@ -74,6 +88,17 @@ namespace CliMed.Api.Tests.Services
             var result = sut.UpdatePassword(user);
 
             Assert.IsType<UserDto>(result);
+        }
+
+        [Fact]
+        public void UpdatePassword_ShouldSaveHashedPassword()
+        {
+            var user = UserBuilder.Simple().Build();
+            user.Password = "newPassword";
+
+            var result = sut.UpdatePassword(user);
+
+            cryptoMock.Verify(x => x.HashPassword(It.IsAny<string>()), Times.Once);
         }
     }
 }

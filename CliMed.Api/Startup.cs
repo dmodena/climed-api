@@ -3,6 +3,7 @@ using CliMed.Api.Auth;
 using CliMed.Api.Data;
 using CliMed.Api.Repositories;
 using CliMed.Api.Services;
+using CliMed.Api.Utils;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -38,6 +39,7 @@ namespace CliMed.Api
             services.AddScoped<IUserService, UserService>();
 
             services.AddScoped<ITokens, Tokens>();
+            services.AddScoped<ICrypto, Crypto>();
 
             services.AddAutoMapper(typeof(Startup));
 

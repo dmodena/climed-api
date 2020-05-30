@@ -5,6 +5,7 @@ using CliMed.Api.Models;
 using CliMed.Api.Repositories;
 using CliMed.Api.Services;
 using CliMed.Api.Tests.Builders;
+using CliMed.Api.Utils;
 using Moq;
 using Xunit;
 
@@ -15,6 +16,7 @@ namespace CliMed.Api.Tests.Services
         private Mock<IUserRepository> userRepositoryMock;
         private Mock<ITokens> tokensMock;
         private Mock<IMapper> mapperMock;
+        private Mock<ICrypto> cryptoMock;
         private AuthService sut;
 
         public AuthServiceTests()
@@ -24,14 +26,18 @@ namespace CliMed.Api.Tests.Services
             tokensMock = new Mock<ITokens>();
 
             mapperMock = new Mock<IMapper>();
-            mapperMock.Setup(m => m.Map<UserDto>(It.IsAny<User>())).Returns<User>(u => new UserDto {
+            mapperMock.Setup(m => m.Map<UserDto>(It.IsAny<User>())).Returns<User>(u => new UserDto
+            {
                 Id = u.Id,
                 Email = u.Email,
                 Username = u.Username,
                 Role = u.Role,
             });
 
-            sut = new AuthService(userRepositoryMock.Object, tokensMock.Object, mapperMock.Object);
+            cryptoMock = new Mock<ICrypto>();
+            cryptoMock.Setup(m => m.IsMatchPassword(It.IsAny<string>(), It.IsAny<string>())).Returns(true);
+
+            sut = new AuthService(userRepositoryMock.Object, tokensMock.Object, mapperMock.Object, cryptoMock.Object);
         }
 
         [Fact]
@@ -76,6 +82,7 @@ namespace CliMed.Api.Tests.Services
             var user = UserBuilder.Simple().WithPassword("b").Build();
             userRepositoryMock.Setup(m => m.GetByEmail(It.IsAny<string>()))
                 .Returns(userDb);
+            cryptoMock.Setup(m => m.IsMatchPassword("b", "a")).Returns(false);
 
             var result = sut.Login(user);
 

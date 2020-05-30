@@ -2,6 +2,7 @@
 using CliMed.Api.Dto;
 using CliMed.Api.Models;
 using CliMed.Api.Repositories;
+using CliMed.Api.Utils;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 
@@ -11,11 +12,13 @@ namespace CliMed.Api.Services
     {
         private readonly IUserRepository _repository;
         private readonly IMapper _mapper;
+        private readonly ICrypto _crypto;
 
-        public UserService([FromServices] IUserRepository repository, [FromServices] IMapper mapper)
+        public UserService([FromServices] IUserRepository repository, [FromServices] IMapper mapper, [FromServices] ICrypto crypto)
         {
             _repository = repository;
             _mapper = mapper;
+            _crypto = crypto;
         }
 
         public IList<UserDto> GetAllItems()
@@ -38,6 +41,7 @@ namespace CliMed.Api.Services
 
         public UserDto Create(User user)
         {
+            user.Password = _crypto.HashPassword(user.Password);
             var userDb = _repository.Create(user);
             return _mapper.Map<UserDto>(userDb);
         }
@@ -45,7 +49,7 @@ namespace CliMed.Api.Services
         public UserDto UpdatePassword(User user)
         {
             var userDb = _repository.GetByEmail(user.Email);
-            userDb.Password = user.Password;
+            userDb.Password = _crypto.HashPassword(user.Password);
             _repository.Update(userDb);
             return _mapper.Map<UserDto>(userDb);
         }

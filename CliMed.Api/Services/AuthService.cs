@@ -3,8 +3,8 @@ using CliMed.Api.Auth;
 using CliMed.Api.Dto;
 using CliMed.Api.Models;
 using CliMed.Api.Repositories;
+using CliMed.Api.Utils;
 using Microsoft.AspNetCore.Mvc;
-using System;
 
 namespace CliMed.Api.Services
 {
@@ -13,12 +13,14 @@ namespace CliMed.Api.Services
         private readonly IUserRepository _userRepository;
         private readonly ITokens _tokens;
         private readonly IMapper _mapper;
+        private readonly ICrypto _crypto;
 
-        public AuthService([FromServices] IUserRepository userRepository, [FromServices] ITokens tokens, [FromServices] IMapper mapper)
+        public AuthService([FromServices] IUserRepository userRepository, [FromServices] ITokens tokens, [FromServices] IMapper mapper, [FromServices] ICrypto crypto)
         {
             _userRepository = userRepository;
             _tokens = tokens;
             _mapper = mapper;
+            _crypto = crypto;
         }
 
         public UserTokenDto Login(User user)
@@ -28,7 +30,7 @@ namespace CliMed.Api.Services
             if (userDb == null)
                 return null;
 
-            if (user.Password != userDb.Password)
+            if (!_crypto.IsMatchPassword(user.Password, userDb.Password))
                 return null;
 
             var token = _tokens.GenerateToken(userDb);
