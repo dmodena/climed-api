@@ -9,6 +9,7 @@ namespace CliMed.Api.Services
         IList<UserDto> GetAllItems();
         UserDto GetById(long id);
         UserDto GetByEmail(string email);
+        IList<UserDto> GetByRoleValue(string roleValue);
         UserDto Create(User user);
         UserDto UpdatePassword(User user);
     }

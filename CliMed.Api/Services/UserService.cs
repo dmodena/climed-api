@@ -53,5 +53,11 @@ namespace CliMed.Api.Services
             _repository.Update(userDb);
             return _mapper.Map<UserDto>(userDb);
         }
+
+        public IList<UserDto> GetByRoleValue(string roleValue)
+        {
+            var users = _repository.GetByRoleValue(roleValue);
+            return _mapper.Map<IList<UserDto>>(users);
+        }
     }
 }

@@ -2,6 +2,7 @@
 using CliMed.Api.Repositories;
 using CliMed.Api.Tests.Builders;
 using CliMed.Api.Tests.Data;
+using System.Collections.Generic;
 using System.Linq;
 using Xunit;
 
@@ -36,6 +37,25 @@ namespace CliMed.Api.Tests.Repositories
             var usersWithRoles = result.Where(u => u.Role?.Id > 0).ToList();
 
             Assert.True(usersWithRoles.Count > 0);
+        }
+
+        [Fact]
+        public void GetByRoleValue_ShouldReturnUserList()
+        {
+            var result = sut.GetByRoleValue("admin");
+
+            Assert.NotNull(result);
+            Assert.NotEmpty(result);
+            Assert.IsAssignableFrom<IList<User>>(result);
+        }
+
+        [Fact]
+        public void GetByRoleValue_ShouldReturnEmptyListForInexistentRole()
+        {
+            var result = sut.GetByRoleValue("inexistent");
+
+            Assert.Empty(result);
+            Assert.IsAssignableFrom<IList<User>>(result);
         }
 
         [Fact]

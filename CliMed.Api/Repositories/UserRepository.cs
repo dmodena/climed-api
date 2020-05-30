@@ -38,6 +38,11 @@ namespace CliMed.Api.Repositories
             return _context.Users.Include(u => u.Role).FirstOrDefault(u => u.Id.Value == id);
         }
 
+        public IList<User> GetByRoleValue(string roleValue)
+        {
+            return _context.Users.Include(u => u.Role).Where(u => u.Role.Value == roleValue).ToList();
+        }
+
         public User Update(User item)
         {
             var userDb = _context.Users.SingleOrDefault(u => u.Id == item.Id);

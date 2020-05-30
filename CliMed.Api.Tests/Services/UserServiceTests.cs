@@ -60,6 +60,14 @@ namespace CliMed.Api.Tests.Services
         }
 
         [Fact]
+        public void GetByRoleValue_ShouldReturnUserDtoList()
+        {
+            var result = sut.GetByRoleValue("admin");
+
+            Assert.IsAssignableFrom<IList<UserDto>>(result);
+        }
+
+        [Fact]
         public void Create_ShouldReturnUserDto()
         {
             var user = UserBuilder.Simple().Build();
