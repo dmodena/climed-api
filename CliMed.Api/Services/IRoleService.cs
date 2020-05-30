@@ -6,5 +6,6 @@ namespace CliMed.Api.Services
     public interface IRoleService
     {
         IList<Role> GetAllItems();
+        Role GetByValue(string value);
     }
 }

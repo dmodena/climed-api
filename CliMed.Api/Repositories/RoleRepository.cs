@@ -19,5 +19,10 @@ namespace CliMed.Api.Repositories
         {
             return _context.Roles.ToList();
         }
+
+        public Role GetByValue(string value)
+        {
+            return _context.Roles.FirstOrDefault(r => r.Value == value);
+        }
     }
 }

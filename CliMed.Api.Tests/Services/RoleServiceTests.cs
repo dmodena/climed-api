@@ -16,6 +16,7 @@ namespace CliMed.Api.Tests.Services
         {
             roleRepositoryMock = new Mock<IRoleRepository>();
             roleRepositoryMock.Setup(m => m.GetlAllItems()).Returns(new List<Role>());
+            roleRepositoryMock.Setup(m => m.GetByValue(It.IsAny<string>())).Returns(new Role());
 
             sut = new RoleService(roleRepositoryMock.Object);
         }
@@ -26,6 +27,14 @@ namespace CliMed.Api.Tests.Services
             var result = sut.GetAllItems();
 
             Assert.IsAssignableFrom<IList<Role>>(result);
+        }
+
+        [Fact]
+        public void GetByValue_ShouldReturnRole()
+        {
+            var result = sut.GetByValue("admin");
+
+            Assert.IsType<Role>(result);
         }
     }
 }

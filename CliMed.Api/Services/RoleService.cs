@@ -16,5 +16,10 @@ namespace CliMed.Api.Services
         {
             return _repository.GetlAllItems();
         }
+
+        public Role GetByValue(string value)
+        {
+            return _repository.GetByValue(value);
+        }
     }
 }
