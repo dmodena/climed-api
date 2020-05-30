@@ -31,7 +31,8 @@ namespace CliMed.Api.Tests.Data
                 new[]
                 {
                     new User { Id = 1, Email = "john.doe@example.com", Password = "johndoe", Username = "johndoe" },
-                    new User { Id = 2, Email = "admmin@example.com", Password = "admin", Username = "mradmin", RoleId = 1, Role = adminRole }
+                    new User { Id = 2, Email = "admmin@example.com", Password = "admin", Username = "mradmin", RoleId = 1, Role = adminRole },
+                    new User { Id = 3, Email = "scnadmin@example.com", Password = "scnadmin", Username = "secondadmin", RoleId = 1, Role = adminRole }
                 });
 
             context.SaveChanges();
