@@ -24,6 +24,20 @@ namespace CliMed.Api.Controllers
 
         [HttpPost]
         [AllowAnonymous]
+        [Route("signup")]
+        [ProducesResponseType(typeof(UserTokenDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        public ActionResult<UserTokenDto> SignUp([FromBody] User user)
+        {
+            var userTokenDto = _authService.SignUp(user);
+            if (userTokenDto == null)
+                return Forbid();
+
+            return Ok(userTokenDto);
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
         [Route("login")]
         [ProducesResponseType(typeof(UserTokenDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]

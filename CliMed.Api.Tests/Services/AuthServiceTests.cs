@@ -1,51 +1,78 @@
-﻿using AutoMapper;
-using CliMed.Api.Auth;
+﻿using CliMed.Api.Auth;
 using CliMed.Api.Dto;
 using CliMed.Api.Models;
 using CliMed.Api.Repositories;
 using CliMed.Api.Services;
 using CliMed.Api.Tests.Builders;
-using CliMed.Api.Utils;
 using Moq;
+using System.Collections.Generic;
 using Xunit;
 
 namespace CliMed.Api.Tests.Services
 {
     public class AuthServiceTests
     {
-        private Mock<IUserRepository> userRepositoryMock;
+        private Mock<IRoleRepository> roleRepositoryMock;
+        private Mock<IUserService> userServiceMock;
         private Mock<ITokens> tokensMock;
-        private Mock<IMapper> mapperMock;
-        private Mock<ICrypto> cryptoMock;
         private AuthService sut;
 
         public AuthServiceTests()
         {
-            userRepositoryMock = new Mock<IUserRepository>();
+            roleRepositoryMock = new Mock<IRoleRepository>();
+            roleRepositoryMock.Setup(m => m.GetByValue("admin")).Returns(new Role { Id = 1, Value = "admin" });
+
+            userServiceMock = new Mock<IUserService>();
+            userServiceMock.Setup(m => m.GetByRoleValue("admin")).Returns(new List<UserDto>());
+            userServiceMock.Setup(m => m.Create(It.IsAny<User>())).Returns(new UserDto());
+            userServiceMock.Setup(m => m.Validate(It.IsAny<User>())).Returns((User u) => new UserDto { Email = u.Email, Role = u.Role });
 
             tokensMock = new Mock<ITokens>();
+            tokensMock.Setup(m => m.GenerateToken(It.IsAny<UserDto>())).Returns(It.IsAny<string>());
 
-            mapperMock = new Mock<IMapper>();
-            mapperMock.Setup(m => m.Map<UserDto>(It.IsAny<User>())).Returns<User>(u => new UserDto
-            {
-                Id = u.Id,
-                Email = u.Email,
-                Username = u.Username,
-                Role = u.Role,
-            });
+            sut = new AuthService(roleRepositoryMock.Object, userServiceMock.Object, tokensMock.Object);
+        }
 
-            cryptoMock = new Mock<ICrypto>();
-            cryptoMock.Setup(m => m.IsMatchPassword(It.IsAny<string>(), It.IsAny<string>())).Returns(true);
+        [Fact]
+        public void SignUp_ShouldReturnUserTokenDto()
+        {
+            var user = UserBuilder.Simple().Build();
 
-            sut = new AuthService(userRepositoryMock.Object, tokensMock.Object, mapperMock.Object, cryptoMock.Object);
+            var result = sut.SignUp(user);
+
+            Assert.NotNull(result);
+            Assert.IsType<UserTokenDto>(result);
+        }
+
+        [Fact]
+        public void SignUp_ShouldReturnUserTokenDtoWithAdminRole()
+        {
+            var user = UserBuilder.Simple().Build();
+            userServiceMock.Setup(m => m.Create(It.IsAny<User>())).Returns((User u) => new UserDto { Email = u.Email, Role = u.Role });
+
+            var result = sut.SignUp(user);
+
+            Assert.NotNull(result);
+            Assert.IsType<UserTokenDto>(result);
+            Assert.NotNull(result.User.Role);
+            Assert.Equal("admin", result.User.Role.Value);
+        }
+
+        [Fact]
+        public void SignUp_ShouldReturnNullIfAdminUserAlreadyExists()
+        {
+            var user = UserBuilder.Simple().Build();
+            userServiceMock.Setup(m => m.GetByRoleValue("admin")).Returns(new List<UserDto> { new UserDto() });
+
+            var result = sut.SignUp(user);
+
+            Assert.Null(result);
         }
 
         [Fact]
         public void Login_ShouldReturnUserTokenDto()
         {
             var user = UserBuilder.Simple().Build();
-            userRepositoryMock.Setup(m => m.GetByEmail(It.IsAny<string>()))
-                .Returns(user);
 
             var result = sut.Login(user);
 
@@ -57,8 +84,6 @@ namespace CliMed.Api.Tests.Services
         {
             var role = new Role { Id = 1, Value = "admin" };
             var user = UserBuilder.Simple().WithRole(role).Build();
-            userRepositoryMock.Setup(m => m.GetByEmail(It.IsAny<string>()))
-                .Returns(user);
 
             var result = sut.Login(user);
 
@@ -66,23 +91,10 @@ namespace CliMed.Api.Tests.Services
         }
 
         [Fact]
-        public void Login_ShouldReturnNullForUnexistentUser()
+        public void Login_ShouldReturnNullForIvalidUser()
         {
             var user = UserBuilder.Simple().Build();
-
-            var result = sut.Login(user);
-
-            Assert.Null(result);
-        }
-
-        [Fact]
-        public void Login_ShouldReturnNullForIncorrectPassword()
-        {
-            var userDb = UserBuilder.Simple().WithPassword("a").Build();
-            var user = UserBuilder.Simple().WithPassword("b").Build();
-            userRepositoryMock.Setup(m => m.GetByEmail(It.IsAny<string>()))
-                .Returns(userDb);
-            cryptoMock.Setup(m => m.IsMatchPassword("b", "a")).Returns(false);
+            userServiceMock.Setup(m => m.Validate(It.IsAny<User>())).Returns(null as UserDto);
 
             var result = sut.Login(user);
 

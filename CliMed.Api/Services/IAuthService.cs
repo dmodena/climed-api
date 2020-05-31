@@ -6,5 +6,6 @@ namespace CliMed.Api.Services
     public interface IAuthService
     {
         UserTokenDto Login(User user);
+        UserTokenDto SignUp(User user);
     }
 }

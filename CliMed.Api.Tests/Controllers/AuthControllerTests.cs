@@ -30,7 +30,53 @@ namespace CliMed.Api.Tests.Controllers
 
             userServiceMock = new Mock<IUserService>();
 
+
             sut = new AuthController(authServiceMock.Object, userServiceMock.Object);
+        }
+
+        [Fact]
+        public void SignUp_ShouldHaveAllowAnonymousAttribute()
+        {
+            MethodInfo sutMethod = sut.GetType().GetMethod("SignUp");
+            Attribute[] attributes = Attribute.GetCustomAttributes(sutMethod);
+
+            var allowAnonymousAttribute = attributes.FirstOrDefault(a => a is AllowAnonymousAttribute) as AllowAnonymousAttribute;
+
+            Assert.NotNull(allowAnonymousAttribute);
+        }
+
+        [Fact]
+        public void SignUp_ShouldReturn403Forbidden()
+        {
+            var user = UserBuilder.Simple().Build();
+            authServiceMock.Setup(m => m.SignUp(It.IsAny<User>())).Returns(null as UserTokenDto);
+
+            var result = sut.SignUp(user);
+
+            Assert.IsType<ForbidResult>(result.Result);
+        }
+
+        [Fact]
+        public void SignUp_ShouldReturn200OK()
+        {
+            var user = UserBuilder.Simple().Build();
+            authServiceMock.Setup(m => m.SignUp(It.IsAny<User>())).Returns(new UserTokenDto());
+
+            var result = sut.SignUp(user);
+
+            Assert.IsType<OkObjectResult>(result.Result);
+        }
+
+        [Fact]
+        public void SignUp_ShouldReturnUserTokenDto()
+        {
+            var user = UserBuilder.Simple().Build();
+            authServiceMock.Setup(m => m.SignUp(It.IsAny<User>())).Returns(new UserTokenDto());
+
+            var result = sut.SignUp(user).Result as OkObjectResult;
+
+            Assert.NotNull(result.Value);
+            Assert.IsType<UserTokenDto>(result.Value);
         }
 
         [Fact]

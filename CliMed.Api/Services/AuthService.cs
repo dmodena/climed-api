@@ -1,47 +1,51 @@
-﻿using AutoMapper;
-using CliMed.Api.Auth;
+﻿using CliMed.Api.Auth;
 using CliMed.Api.Dto;
 using CliMed.Api.Models;
 using CliMed.Api.Repositories;
-using CliMed.Api.Utils;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CliMed.Api.Services
 {
     public class AuthService : IAuthService
     {
-        private readonly IUserRepository _userRepository;
+        private readonly IRoleRepository _roleRepository;
+        private readonly IUserService _userService;
         private readonly ITokens _tokens;
-        private readonly IMapper _mapper;
-        private readonly ICrypto _crypto;
 
-        public AuthService([FromServices] IUserRepository userRepository, [FromServices] ITokens tokens, [FromServices] IMapper mapper, [FromServices] ICrypto crypto)
+        public AuthService([FromServices] IRoleRepository roleRepository, [FromServices] IUserService userService, [FromServices] ITokens tokens)
         {
-            _userRepository = userRepository;
+            _roleRepository = roleRepository;
+            _userService = userService;
             _tokens = tokens;
-            _mapper = mapper;
-            _crypto = crypto;
+        }
+
+        public UserTokenDto SignUp(User user)
+        {
+            var anyAdminUser = _userService.GetByRoleValue("admin").Count > 0;
+            if (anyAdminUser)
+                return null;
+
+            var adminRole = _roleRepository.GetByValue("admin");
+            user.Role = adminRole;
+
+            var userDb = _userService.Create(user);
+
+            return GetUserTokenDto(userDb);
         }
 
         public UserTokenDto Login(User user)
         {
-            var userDb = _userRepository.GetByEmail(user.Email);
-
-            if (userDb == null)
+            var userDto = _userService.Validate(user);
+            if (userDto == null)
                 return null;
 
-            if (!_crypto.IsMatchPassword(user.Password, userDb.Password))
-                return null;
-
-            var token = _tokens.GenerateToken(userDb);
-
-            var userTokenDto = new UserTokenDto
-            {
-                User = _mapper.Map<UserDto>(userDb),
-                Token = token
-            };
-
-            return userTokenDto;
+            return GetUserTokenDto(userDto);
         }
+
+        private UserTokenDto GetUserTokenDto(UserDto userDto) => new UserTokenDto
+        {
+            User = userDto,
+            Token = _tokens.GenerateToken(userDto)
+        };
     }
 }
