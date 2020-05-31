@@ -1,4 +1,4 @@
-﻿using CliMed.Api.Models;
+﻿using CliMed.Api.Dto;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.IdentityModel.Tokens.Jwt;
@@ -9,7 +9,7 @@ namespace CliMed.Api.Auth
 {
     public class Tokens : ITokens
     {
-        public string GenerateToken(User user)
+        public string GenerateToken(UserDto userDto)
         {
             var key = Environment.GetEnvironmentVariable("API_AUTH_KEY");
             var keyBytes = Encoding.ASCII.GetBytes(key);
@@ -18,8 +18,8 @@ namespace CliMed.Api.Auth
             {
                 Subject = new ClaimsIdentity(new Claim[]
                 {
-                    new Claim(ClaimTypes.Email, user.Email),
-                    new Claim(ClaimTypes.Role, user.Role?.Value ?? "unassigned")
+                    new Claim(ClaimTypes.Email, userDto.Email),
+                    new Claim(ClaimTypes.Role, userDto.Role?.Value ?? "unassigned")
                 }),
                 Expires = DateTime.UtcNow.AddHours(2),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(keyBytes), SecurityAlgorithms.HmacSha256Signature)

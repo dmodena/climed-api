@@ -1,9 +1,9 @@
-﻿using CliMed.Api.Models;
+﻿using CliMed.Api.Dto;
 
 namespace CliMed.Api.Auth
 {
     public interface ITokens
     {
-        string GenerateToken(User user);
+        string GenerateToken(UserDto userDto);
     }
 }
