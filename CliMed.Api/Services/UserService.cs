@@ -59,5 +59,17 @@ namespace CliMed.Api.Services
             var users = _repository.GetByRoleValue(roleValue);
             return _mapper.Map<IList<UserDto>>(users);
         }
+
+        public UserDto Validate(User user)
+        {
+            var userDb = _repository.GetByEmail(user.Email);
+            if (userDb == null)
+                return null;
+
+            if (!_crypto.IsMatchPassword(user.Password, userDb.Password))
+                return null;
+
+            return _mapper.Map<UserDto>(user);
+        }
     }
 }
