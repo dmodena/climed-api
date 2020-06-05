@@ -26,7 +26,7 @@ namespace CliMed.Api.Tests.Controllers
         public AuthControllerTests()
         {
             authServiceMock = new Mock<IAuthService>();
-            authServiceMock.Setup(m => m.Login(It.IsAny<User>())).Returns(new UserTokenDto());
+            authServiceMock.Setup(m => m.Login(It.IsAny<UserLoginDto>())).Returns(new UserTokenDto());
 
             userServiceMock = new Mock<IUserService>();
 
@@ -94,10 +94,10 @@ namespace CliMed.Api.Tests.Controllers
         public void Login_ShouldReturn401Unauthorized()
         {
             UserTokenDto nonExistentUser = null;
-            var user = UserBuilder.Simple().Build();
-            authServiceMock.Setup(m => m.Login(It.IsAny<User>())).Returns(nonExistentUser);
+            var userLoginDto = UserLoginDtoBuilder.Simple().Build();
+            authServiceMock.Setup(m => m.Login(It.IsAny<UserLoginDto>())).Returns(nonExistentUser);
 
-            var result = sut.Login(user);
+            var result = sut.Login(userLoginDto);
 
             Assert.IsType<UnauthorizedObjectResult>(result.Result);
         }
@@ -105,9 +105,9 @@ namespace CliMed.Api.Tests.Controllers
         [Fact]
         public void Login_ShouldReturn200OK()
         {
-            var user = UserBuilder.Simple().Build();
+            var userLoginDto = UserLoginDtoBuilder.Simple().Build();
 
-            var result = sut.Login(user);
+            var result = sut.Login(userLoginDto);
 
             Assert.IsType<OkObjectResult>(result.Result);
         }
@@ -115,9 +115,9 @@ namespace CliMed.Api.Tests.Controllers
         [Fact]
         public void Login_ShouldReturnUserTokenDto()
         {
-            var user = UserBuilder.Simple().Build();
+            var userLoginDto = UserLoginDtoBuilder.Simple().Build();
 
-            var result = sut.Login(user).Result as OkObjectResult;
+            var result = sut.Login(userLoginDto).Result as OkObjectResult;
 
             Assert.IsType<UserTokenDto>(result.Value);
         }

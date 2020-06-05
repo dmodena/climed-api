@@ -41,9 +41,9 @@ namespace CliMed.Api.Controllers
         [Route("login")]
         [ProducesResponseType(typeof(UserTokenDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public ActionResult<UserTokenDto> Login([FromBody] User user)
+        public ActionResult<UserTokenDto> Login([FromBody] UserLoginDto userLoginDto)
         {
-            var userTokenDto = _authService.Login(user);
+            var userTokenDto = _authService.Login(userLoginDto);
 
             if (userTokenDto == null)
                 return Unauthorized("Invalid user or password.");

@@ -112,10 +112,10 @@ namespace CliMed.Api.Tests.Services
         [Fact]
         public void Validate_ShouldReturnNullForInexistentUser()
         {
-            var user = UserBuilder.Simple().Build();
+            var userLoginDto = UserLoginDtoBuilder.Simple().Build();
             userRepositoryMock.Setup(m => m.GetByEmail(It.IsAny<string>())).Returns(null as User);
 
-            var result = sut.Validate(user);
+            var result = sut.Validate(userLoginDto);
 
             Assert.Null(result);
         }
@@ -123,10 +123,10 @@ namespace CliMed.Api.Tests.Services
         [Fact]
         public void Validate_ShouldReturnNullIfPasswordsDontMatch()
         {
-            var user = UserBuilder.Simple().Build();
+            var userLoginDto = UserLoginDtoBuilder.Simple().Build();
             cryptoMock.Setup(m => m.IsMatchPassword(It.IsAny<string>(), It.IsAny<string>())).Returns(false);
 
-            var result = sut.Validate(user);
+            var result = sut.Validate(userLoginDto);
 
             Assert.Null(result);
         }
@@ -134,10 +134,10 @@ namespace CliMed.Api.Tests.Services
         [Fact]
         public void Validate_ShouldReturnUserDto()
         {
-            var user = UserBuilder.Simple().Build();
+            var userLoginDto = UserLoginDtoBuilder.Simple().Build();
             cryptoMock.Setup(m => m.IsMatchPassword(It.IsAny<string>(), It.IsAny<string>())).Returns(true);
 
-            var result = sut.Validate(user);
+            var result = sut.Validate(userLoginDto);
 
             Assert.NotNull(result);
             Assert.IsType<UserDto>(result);

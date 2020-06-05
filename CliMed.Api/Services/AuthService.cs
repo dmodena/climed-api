@@ -33,9 +33,9 @@ namespace CliMed.Api.Services
             return GetUserTokenDto(userDb);
         }
 
-        public UserTokenDto Login(User user)
+        public UserTokenDto Login(UserLoginDto userLoginDto)
         {
-            var userDto = _userService.Validate(user);
+            var userDto = _userService.Validate(userLoginDto);
             if (userDto == null)
                 return null;
 

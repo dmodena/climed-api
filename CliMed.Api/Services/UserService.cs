@@ -60,16 +60,16 @@ namespace CliMed.Api.Services
             return _mapper.Map<IList<UserDto>>(users);
         }
 
-        public UserDto Validate(User user)
+        public UserDto Validate(UserLoginDto userLoginDto)
         {
-            var userDb = _repository.GetByEmail(user.Email);
+            var userDb = _repository.GetByEmail(userLoginDto.Email);
             if (userDb == null)
                 return null;
 
-            if (!_crypto.IsMatchPassword(user.Password, userDb.Password))
+            if (!_crypto.IsMatchPassword(userLoginDto.Password, userDb.Password))
                 return null;
 
-            return _mapper.Map<UserDto>(user);
+            return _mapper.Map<UserDto>(userDb);
         }
     }
 }

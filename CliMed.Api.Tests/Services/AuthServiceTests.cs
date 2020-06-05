@@ -25,7 +25,7 @@ namespace CliMed.Api.Tests.Services
             userServiceMock = new Mock<IUserService>();
             userServiceMock.Setup(m => m.GetByRoleValue("admin")).Returns(new List<UserDto>());
             userServiceMock.Setup(m => m.Create(It.IsAny<User>())).Returns(new UserDto());
-            userServiceMock.Setup(m => m.Validate(It.IsAny<User>())).Returns((User u) => new UserDto { Email = u.Email, Role = u.Role });
+            userServiceMock.Setup(m => m.Validate(It.IsAny<UserLoginDto>())).Returns(new UserDto());
 
             tokensMock = new Mock<ITokens>();
             tokensMock.Setup(m => m.GenerateToken(It.IsAny<UserDto>())).Returns(It.IsAny<string>());
@@ -72,9 +72,9 @@ namespace CliMed.Api.Tests.Services
         [Fact]
         public void Login_ShouldReturnUserTokenDto()
         {
-            var user = UserBuilder.Simple().Build();
+            var userLoginDto = UserLoginDtoBuilder.Simple().Build();
 
-            var result = sut.Login(user);
+            var result = sut.Login(userLoginDto);
 
             Assert.IsType<UserTokenDto>(result);
         }
@@ -83,9 +83,10 @@ namespace CliMed.Api.Tests.Services
         public void Login_ShouldReturnUserTokenDtoWithRole()
         {
             var role = new Role { Id = 1, Value = "admin" };
-            var user = UserBuilder.Simple().WithRole(role).Build();
+            var userLoginDto = UserLoginDtoBuilder.Simple().Build();
+            userServiceMock.Setup(m => m.Validate(It.IsAny<UserLoginDto>())).Returns(new UserDto { Role = role });
 
-            var result = sut.Login(user);
+            var result = sut.Login(userLoginDto);
 
             Assert.NotNull(result.User.Role);
         }
@@ -93,10 +94,10 @@ namespace CliMed.Api.Tests.Services
         [Fact]
         public void Login_ShouldReturnNullForIvalidUser()
         {
-            var user = UserBuilder.Simple().Build();
-            userServiceMock.Setup(m => m.Validate(It.IsAny<User>())).Returns(null as UserDto);
+            var userLoginDto = UserLoginDtoBuilder.Simple().Build();
+            userServiceMock.Setup(m => m.Validate(It.IsAny<UserLoginDto>())).Returns(null as UserDto);
 
-            var result = sut.Login(user);
+            var result = sut.Login(userLoginDto);
 
             Assert.Null(result);
         }
