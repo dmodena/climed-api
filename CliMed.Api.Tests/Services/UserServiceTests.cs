@@ -90,10 +90,10 @@ namespace CliMed.Api.Tests.Services
         [Fact]
         public void UpdatePassword_ShouldReturnUserDto()
         {
-            var user = UserBuilder.Simple().Build();
-            user.Password = "newPassword";
+            var userLoginDto = UserLoginDtoBuilder.Simple().Build();
+            userLoginDto.Password = "newPassword";
 
-            var result = sut.UpdatePassword(user);
+            var result = sut.UpdatePassword(userLoginDto);
 
             Assert.IsType<UserDto>(result);
         }
@@ -101,10 +101,10 @@ namespace CliMed.Api.Tests.Services
         [Fact]
         public void UpdatePassword_ShouldSaveHashedPassword()
         {
-            var user = UserBuilder.Simple().Build();
-            user.Password = "newPassword";
+            var userLoginDto = UserLoginDtoBuilder.Simple().Build();
+            userLoginDto.Password = "newPassword";
 
-            var result = sut.UpdatePassword(user);
+            var result = sut.UpdatePassword(userLoginDto);
 
             cryptoMock.Verify(x => x.HashPassword(It.IsAny<string>()), Times.Once);
         }

@@ -30,7 +30,6 @@ namespace CliMed.Api.Tests.Controllers
 
             userServiceMock = new Mock<IUserService>();
 
-
             sut = new AuthController(authServiceMock.Object, userServiceMock.Object);
         }
 
@@ -136,12 +135,11 @@ namespace CliMed.Api.Tests.Controllers
         [Fact]
         public void ResetPassword_ShouldAllowAdmin()
         {
-            var adminRole = RoleBuilder.Admin().Build();
-            var user = UserBuilder.Typical().WithRole(adminRole).Build();
-            var controllerContext = GetControllerContextFake(user);
+            var userLoginDto = UserLoginDtoBuilder.Simple().Build();
+            var controllerContext = GetControllerContextFake(userLoginDto, isAdmin: true);
             sut.ControllerContext = controllerContext;
 
-            var result = sut.ResetPassword(user);
+            var result = sut.ResetPassword(userLoginDto);
 
             Assert.IsType<OkObjectResult>(result.Result);
         }
@@ -149,11 +147,11 @@ namespace CliMed.Api.Tests.Controllers
         [Fact]
         public void ResetPassword_ShouldAllowSameUser()
         {
-            var user = UserBuilder.Simple().Build();
-            var controllerContext = GetControllerContextFake(user);
+            var userLoginDto = UserLoginDtoBuilder.Simple().Build();
+            var controllerContext = GetControllerContextFake(userLoginDto);
             sut.ControllerContext = controllerContext;
 
-            var result = sut.ResetPassword(user);
+            var result = sut.ResetPassword(userLoginDto);
 
             Assert.IsType<OkObjectResult>(result.Result);
         }
@@ -161,12 +159,12 @@ namespace CliMed.Api.Tests.Controllers
         [Fact]
         public void ResetPassword_ShouldDenyOtherUser()
         {
-            var usera = UserBuilder.Simple().WithEmail("a@a.com").Build();
-            var userb = UserBuilder.Simple().WithEmail("b@b.com").Build();
-            var controllerContext = GetControllerContextFake(usera);
+            var userLoginDtoA = UserLoginDtoBuilder.Simple().WithEmail("a@a.com").Build();
+            var userLoginDtoB = UserLoginDtoBuilder.Simple().WithEmail("b@b.com").Build();
+            var controllerContext = GetControllerContextFake(userLoginDtoA);
             sut.ControllerContext = controllerContext;
 
-            var result = sut.ResetPassword(userb);
+            var result = sut.ResetPassword(userLoginDtoB);
 
             Assert.IsType<ForbidResult>(result.Result);
         }
@@ -174,21 +172,21 @@ namespace CliMed.Api.Tests.Controllers
         [Fact]
         public void ResetPassword_ShouldReturnUserDto()
         {
-            var user = UserBuilder.Simple().Build();
-            userServiceMock.Setup(m => m.UpdatePassword(It.IsAny<User>())).Returns(new UserDto());
-            var controllerContext = GetControllerContextFake(user);
+            var userLoginDto = UserLoginDtoBuilder.Simple().Build();
+            userServiceMock.Setup(m => m.UpdatePassword(It.IsAny<UserLoginDto>())).Returns(new UserDto());
+            var controllerContext = GetControllerContextFake(userLoginDto);
             sut.ControllerContext = controllerContext;
 
-            var result = sut.ResetPassword(user).Result as OkObjectResult;
+            var result = sut.ResetPassword(userLoginDto).Result as OkObjectResult;
 
             Assert.IsType<UserDto>(result.Value);
         }
 
-        private ControllerContext GetControllerContextFake(User user)
+        private ControllerContext GetControllerContextFake(UserLoginDto userLoginDto, bool isAdmin = false)
         {
             var httpContextMock = new Mock<HttpContext>();
-            httpContextMock.Setup(m => m.User.FindFirst(ClaimTypes.Email)).Returns(new Claim(ClaimTypes.Email, user.Email));
-            httpContextMock.Setup(m => m.User.IsInRole("admin")).Returns(user.Role?.Value == "admin");
+            httpContextMock.Setup(m => m.User.FindFirst(ClaimTypes.Email)).Returns(new Claim(ClaimTypes.Email, userLoginDto.Email));
+            httpContextMock.Setup(m => m.User.IsInRole("admin")).Returns(isAdmin);
 
             var controllerContext = new ControllerContext(new ActionContext(httpContextMock.Object, new RouteData(), new ControllerActionDescriptor()));
 

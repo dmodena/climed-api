@@ -46,10 +46,10 @@ namespace CliMed.Api.Services
             return _mapper.Map<UserDto>(userDb);
         }
 
-        public UserDto UpdatePassword(User user)
+        public UserDto UpdatePassword(UserLoginDto userLoginDto)
         {
-            var userDb = _repository.GetByEmail(user.Email);
-            userDb.Password = _crypto.HashPassword(user.Password);
+            var userDb = _repository.GetByEmail(userLoginDto.Email);
+            userDb.Password = _crypto.HashPassword(userLoginDto.Password);
             _repository.Update(userDb);
             return _mapper.Map<UserDto>(userDb);
         }

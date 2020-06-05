@@ -56,11 +56,11 @@ namespace CliMed.Api.Controllers
         [Route("resetpassword")]
         [ProducesResponseType(typeof(UserDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
-        public ActionResult<UserDto> ResetPassword([FromBody] User user)
+        public ActionResult<UserDto> ResetPassword([FromBody] UserLoginDto userLoginDto)
         {
-            if (User.FindFirst(ClaimTypes.Email).Value == user.Email || User.IsInRole("admin"))
+            if (User.FindFirst(ClaimTypes.Email).Value == userLoginDto.Email || User.IsInRole("admin"))
             {
-                var userDto = _userService.UpdatePassword(user);
+                var userDto = _userService.UpdatePassword(userLoginDto);
                 return Ok(userDto);
             }
 
